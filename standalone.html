@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROSHAN ELECTRICIAN - Bill & Invoice Generator</title>
+  <meta name="description" content="Roshan Electrician Billing & Invoice Web App - GitHub Pages Ready">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Hind', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    /* Header Nav */
+    .app-header {
+      background-color: #0e2a47;
+      color: #ffffff;
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      background: #f59e0b;
+      color: #000;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+    }
+    .brand-text h1 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .brand-text p {
+      font-size: 11px;
+      color: #bae6fd;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      cursor: pointer;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-amber { background: #f59e0b; color: #000; font-weight: 700; }
+    .btn-amber:hover { background: #d97706; }
+    .btn-emerald { background: #10b981; color: #fff; }
+    .btn-emerald:hover { background: #059669; }
+    .btn-dark { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+    .btn-dark:hover { background: #334155; color: #fff; }
+
+    /* Layout */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 1024px) {
+      .container {
+        grid-template-columns: 460px 1fr;
+      }
+    }
+
+    /* Editor Form Card */
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .card-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-body {
+      padding: 16px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    /* Items table in editor */
+    .item-row {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .item-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+    }
+    .btn-remove {
+      color: #ef4444;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Quick Preset chips */
+    .preset-container {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+    .preset-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 6px;
+    }
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      background: #ffffff;
+      border: 1px solid #7dd3fc;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .chip:hover {
+      background: #e0f2fe;
+    }
+
+    /* BILL PREVIEW CONTAINER */
+    .preview-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .preview-toolbar {
+      width: 100%;
+      max-width: 794px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* A4 BILL DOCUMENT EXACT FORMAT */
+    #bill-print-area {
+      background: #ffffff;
+      color: #000000;
+      width: 794px;
+      min-width: 794px;
+      max-width: 794px;
+      padding: 28px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+      min-height: 1050px;
+    }
+
+    .bill-header-box {
+      background-color: #0e2a47;
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+      border-radius: 6px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .bill-header-box h2 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .bill-header-box .sub {
+      color: #7dd3fc;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .bill-header-box .contact {
+      color: #e0f2fe;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .bill-title-divider {
+      text-align: center;
+      margin: 16px 0;
+    }
+    .bill-title-divider h3 {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #0e2a47;
+      border-top: 2px solid #0e2a47;
+      border-bottom: 2px solid #0e2a47;
+      padding: 4px 30px;
+    }
+
+    /* Meta Info Grid 2 cols */
+    .bill-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 24px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .meta-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .meta-label {
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+    .meta-val {
+      flex: 1;
+      border-bottom: 1px solid #94a3b8;
+      padding-bottom: 2px;
+      font-weight: 600;
+      min-height: 22px;
+    }
+
+    /* Table */
+    .bill-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+    .bill-table th {
+      background-color: #0e2a47;
+      color: #ffffff;
+      padding: 10px;
+      border: 1px solid #475569;
+      font-weight: 700;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .bill-table td {
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+    }
+    .bill-table tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .text-left { text-align: left; }
+
+    /* Summary Totals */
+    .summary-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    .summary-box {
+      width: 320px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .summary-row.total {
+      background-color: #e6f2fb;
+      font-weight: 800;
+      color: #0e2a47;
+      font-size: 15px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .summary-row.advance {
+      color: #dc2626;
+      font-weight: 700;
+    }
+    .summary-row.due {
+      background-color: #fef3c7;
+      font-weight: 800;
+      font-size: 16px;
+      color: #0e2a47;
+      border-bottom: none;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Words row */
+    .words-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Payment Box */
+    .payment-box {
+      background: #f4f9fd;
+      border: 1px solid #7dd3fc;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .payment-info h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0e2a47;
+      margin-bottom: 6px;
+    }
+    .payment-item {
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+    .payment-item b {
+      display: inline-block;
+      width: 170px;
+    }
+    .qr-container {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+      width: 100px;
+      shrink-0: 0;
+    }
+    .qr-container img {
+      width: 84px;
+      height: 84px;
+      display: block;
+      margin: 0 auto;
+    }
+    .qr-container span {
+      font-size: 9px;
+      font-weight: 700;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Important Note */
+    .notes-box {
+      background: #fff5f5;
+      border: 2px dashed #fca5a5;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 24px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .notes-box h4 {
+      color: #b91c1c;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .notes-box ol {
+      padding-left: 20px;
+      font-size: 12px;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    /* Signature */
+    .signature-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .signature-block {
+      width: 240px;
+      text-align: center;
+    }
+    .sign-image-area {
+      height: 50px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .sign-image-area img {
+      max-height: 48px;
+      max-width: 100%;
+    }
+    .sign-line {
+      border-top: 2px solid #000;
+      padding-top: 4px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* PRINT RULES */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .no-print, .app-header, .card, .preview-toolbar {
+        display: none !important;
+      }
+      .container {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      #bill-print-area {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        padding: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header no-print">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>ROSHAN ELECTRICIAN</h1>
+        <p>A4 बिल जनरेटर • GitHub Web Ready</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-amber" onclick="window.print()">
+        🖨️ A4 प्रिंट / NokoPrint
+      </button>
+      <button class="btn btn-emerald" onclick="shareWhatsApp()">
+        💬 WhatsApp शेयर
+      </button>
+      <button class="btn btn-dark" onclick="resetToSample()">
+        ↺ डिफ़ॉल्ट रीसेट
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Left: Form Controls -->
+    <div class="card no-print">
+      <div class="card-header">
+        <span>✏️ बिल विवरण भरें (Edit Bill)</span>
+        <button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="addNewItem()">
+          + नई पंक्ति
+        </button>
+      </div>
+      <div class="card-body">
+        
+        <!-- Client & Bill Info -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label>बिल नं (Bill No):</label>
+            <input type="text" id="billNo" class="form-control" value="RE-2026/089" oninput="render()">
+          </div>
+          <div class="form-group">
+            <label>दिनांक (Date):</label>
+            <input type="text" id="billDate" class="form-control" value="05/10/2026" oninput="render()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ग्राहक का नाम (Client Name):</label>
+          <input type="text" id="clientName" class="form-control" value="रमेश कुमार" oninput="render()" placeholder="उदा. रमेश कुमार">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>मोबाइल (Phone):</label>
+            <input type="text" id="clientPhone" class="form-control" value="9876543210" oninput="render()" placeholder="9876543210">
+          </div>
+          <div class="form-group">
+            <label>पता (Location):</label>
+            <input type="text" id="clientLocation" class="form-control" value="साहूगढ़ चौक, वार्ड नं 04" oninput="render()" placeholder="साइट स्थान">
+          </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div class="preset-container">
+          <div class="preset-title">⚡ त्वरित कार्य जोड़ें (Quick Add Presets):</div>
+          <div class="preset-chips">
+            <span class="chip" onclick="addPreset('भूतल वायरिंग एवं पाइप फिटिंग', 4500, 21, 'Sq. Ft.')">+ भूतल वायरिंग (₹21)</span>
+            <span class="chip" onclick="addPreset('1st Floor वायरिंग एवं पाइप फिटिंग', 4500, 22, 'Sq. Ft.')">+ 1st Floor (₹22)</span>
+            <span class="chip" onclick="addPreset('2nd Floor वायरिंग एवं पाइप फिटिंग', 4500, 22, 'Sq. Ft.')">+ 2nd Floor (₹22)</span>
+            <span class="chip" onclick="addPreset('छत ढलाई पाइपिंग (Roof Piping)', 2000, 5, 'Sq. Ft.')">+ छत पाइपिंग (₹5)</span>
+            <span class="chip" onclick="addPreset('दीवार झिरी / कटाई (Wall Cutting)', 2000, 8, 'Sq. Ft.')">+ दीवार झिरी (₹8)</span>
+            <span class="chip" onclick="addPreset('स्विच बोर्ड व MCB फिटिंग', 25, 150, 'Point')">+ बोर्ड फिटिंग (₹150)</span>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">कार्य विवरण (Line Items):</div>
+        <div id="itemsList"></div>
+
+        <!-- Advance Payment Option -->
+        <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-top: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-size: 12px; font-weight: 700;">अग्रिम भुगतान (Advance Payment ₹):</label>
+            <button class="btn btn-primary" style="padding: 2px 8px; font-size: 11px;" onclick="setHalfPayment()">
+              50% हाफ पेमेंट सेट करें
+            </button>
+          </div>
+          <input type="number" id="advancePayment" class="form-control" value="146250" oninput="render()">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right: A4 Print Preview -->
+    <div class="preview-wrapper">
+      <div class="preview-toolbar no-print">
+        <span style="font-size: 12px; font-weight: 700; color: #047857;">
+          ● मानक A4 पूर्वावलोकन (NokoPrint व सामान्य प्रिंटर हेतु तैयार)
+        </span>
+        <button class="btn btn-amber" onclick="window.print()">
+          🖨️ प्रिंट निकालें
+        </button>
+      </div>
+
+      <!-- Printable A4 Bill -->
+      <div id="bill-print-area">
+        <!-- 1. Header -->
+        <div class="bill-header-box">
+          <h2>ROSHAN ELECTRICIAN</h2>
+          <div class="sub">इलेक्ट्रिक ठेकेदार एवं सर्विस (Electrical Contractor)</div>
+          <div class="contact">मोबाइल (Phone): +91 8826413633 | पता (Address): साहूगढ़, मधेपुरा (Sahugarh, Madhepura)</div>
+        </div>
+
+        <!-- 2. Title -->
+        <div class="bill-title-divider">
+          <h3>BILL / INVOICE</h3>
+        </div>
+
+        <!-- 3. Meta info (2 columns) -->
+        <div class="bill-meta-grid">
+          <div>
+            <div class="meta-item">
+              <span class="meta-label">बिल नं (Bill No):</span>
+              <span class="meta-val" id="viewBillNo">RE-2026/089</span>
+            </div>
+            <div class="meta-item" style="margin-top: 6px;">
+              <span class="meta-label">ग्राहक का नाम (Client):</span>
+              <span class="meta-val" id="viewClientName">रमेश कुमार</span>
+            </div>
+            <div class="meta-item" style="margin-top: 6px;">
+              <span class="meta-label">पता (Location):</span>
+              <span class="meta-val" id="viewClientLocation">साहूगढ़ चौक, वार्ड नं 04</span>
+            </div>
+          </div>
+          <div>
+            <div class="meta-item">
+              <span class="meta-label">दिनांक (Date):</span>
+              <span class="meta-val" id="viewBillDate">05/10/2026</span>
+            </div>
+            <div class="meta-item" style="margin-top: 6px;">
+              <span class="meta-label">मोबाइल (Phone):</span>
+              <span class="meta-val" id="viewClientPhone">9876543210</span>
+            </div>
+            <div class="meta-item" style="margin-top: 6px;">
+              <span class="meta-label">कुल एरिया:</span>
+              <span class="meta-val" id="viewTotalArea">13,500 Sq. Ft.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Table -->
+        <table class="bill-table">
+          <thead>
+            <tr>
+              <th style="width: 45px;">क्र. सं.</th>
+              <th class="text-left">कार्य का विवरण (Work Description)</th>
+              <th class="text-right" style="width: 110px;">माप (Area)</th>
+              <th class="text-right" style="width: 90px;">दर (Rate)</th>
+              <th class="text-right" style="width: 120px;">कुल (Amount)</th>
+            </tr>
+          </thead>
+          <tbody id="viewTableBody"></tbody>
+        </table>
+
+        <!-- 5. Totals -->
+        <div class="summary-container">
+          <div class="summary-box">
+            <div class="summary-row total">
+              <span>कुल राशि (Total):</span>
+              <span id="viewTotalAmount">₹2,92,500.00</span>
+            </div>
+            <div class="summary-row advance">
+              <span>अग्रिम / हाफ पेमेंट (Half Paid):</span>
+              <span id="viewAdvanceAmount">- ₹1,46,250.00</span>
+            </div>
+            <div class="summary-row due">
+              <span>बकाया राशि (Balance Due):</span>
+              <span id="viewBalanceDue">₹1,46,250.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. In Words -->
+        <div class="words-box">
+          <div>
+            <b>कुल राशि शब्दों में:</b> <span id="viewHindiWords">दो लाख बानवे हजार पांच सौ रुपये मात्र</span>
+          </div>
+          <div style="color: #64748b; font-style: italic;" id="viewEnglishWords">
+            Rupees Two Lakh Ninety-Two Thousand Five Hundred Only
+          </div>
+        </div>
+
+        <!-- 7. Payment Box -->
+        <div class="payment-box">
+          <div class="payment-info">
+            <h4>ऑनलाइन भुगतान (PAYMENT DETAILS)</h4>
+            <div class="payment-item"><b>GPay / PhonePe / UPI:</b> 8826413633@ybl</div>
+            <div class="payment-item"><b>बैंक नाम (Bank Name):</b> Kotak Mahindra Bank</div>
+            <div class="payment-item"><b>मोबाइल नंबर (Phone):</b> 8826413633</div>
+            <div class="payment-item"><b>खाता धारक (Account Name):</b> Roshan Electrician</div>
+          </div>
+          <div class="qr-container">
+            <img id="upiQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8826413633@ybl&pn=Roshan%20Electrician" alt="QR Code">
+            <span>स्कैन कर भुगतान करें</span>
+          </div>
+        </div>
+
+        <!-- 8. Important Notes -->
+        <div class="notes-box">
+          <h4>विशेष नियम एवं शर्तें (Important Note):</h4>
+          <ol>
+            <li>दीवार कटाई (Wall Cutting) के समय 50% (हाफ) पेमेंट देना अनिवार्य है।</li>
+            <li>पूरा काम (Full Work) समाप्त होने पर बकाया 50% पेमेंट (फुल पेमेंट) का भुगतान तुरंत करना होगा।</li>
+          </ol>
+        </div>
+
+        <!-- 9. Signature -->
+        <div class="signature-container">
+          <div class="signature-block">
+            <div class="sign-image-area">
+              <span style="color: #94a3b8; font-size: 11px; font-style: italic;">(Verified)</span>
+            </div>
+            <div class="sign-line">
+              हस्ताक्षर (Roshan Electrician)
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let items = [
+      { desc: 'भूतल (Ground Floor) वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 21 },
+      { desc: '1st Floor वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 22 },
+      { desc: '2nd Floor वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 22 }
+    ];
+
+    // Number formatting in Indian currency
+    function formatINR(n) {
+      if (isNaN(n)) return '₹0.00';
+      const parts = Number(n).toFixed(2).split('.');
+      let lastThree = parts[0].substring(parts[0].length - 3);
+      const otherNumbers = parts[0].substring(0, parts[0].length - 3);
+      if (otherNumbers !== '') lastThree = ',' + lastThree;
+      return '₹' + otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree + '.' + parts[1];
+    }
+
+    function formatNumber(n) {
+      const parts = Number(n).toString().split('.');
+      let lastThree = parts[0].substring(parts[0].length - 3);
+      const otherNumbers = parts[0].substring(0, parts[0].length - 3);
+      if (otherNumbers !== '') lastThree = ',' + lastThree;
+      return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
+    }
+
+    function renderEditorItems() {
+      const container = document.getElementById('itemsList');
+      container.innerHTML = '';
+      items.forEach((it, idx) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <div class="item-row-header">
+            <span># पंक्ति ${idx + 1}</span>
+            <button class="btn-remove" onclick="removeItem(${idx})">✕ हटाएँ</button>
+          </div>
+          <div style="margin-bottom: 6px;">
+            <input type="text" class="form-control" value="${it.desc}" oninput="updateItem(${idx}, 'desc', this.value)" placeholder="कार्य विवरण">
+          </div>
+          <div class="grid-3">
+            <div>
+              <label style="font-size: 11px; font-weight: 600;">माप:</label>
+              <input type="number" class="form-control" value="${it.area}" oninput="updateItem(${idx}, 'area', parseFloat(this.value)||0)">
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600;">दर (₹):</label>
+              <input type="number" class="form-control" value="${it.rate}" oninput="updateItem(${idx}, 'rate', parseFloat(this.value)||0)">
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600;">कुल (₹):</label>
+              <input type="text" class="form-control" readonly value="${(it.area * it.rate).toLocaleString('en-IN')}" style="background: #e2e8f0; font-weight: bold;">
+            </div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function updateItem(idx, key, val) {
+      items[idx][key] = val;
+      render();
+    }
+
+    function removeItem(idx) {
+      items.splice(idx, 1);
+      render();
+    }
+
+    function addNewItem() {
+      items.push({ desc: 'नया कार्य विवरण', area: 1000, unit: 'Sq. Ft.', rate: 22 });
+      render();
+    }
+
+    function addPreset(desc, area, rate, unit) {
+      items.push({ desc, area, rate, unit });
+      render();
+    }
+
+    function setHalfPayment() {
+      const total = items.reduce((s, it) => s + (it.area * it.rate), 0);
+      document.getElementById('advancePayment').value = Math.round(total / 2);
+      render();
+    }
+
+    function resetToSample() {
+      items = [
+        { desc: 'भूतल (Ground Floor) वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 21 },
+        { desc: '1st Floor वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 22 },
+        { desc: '2nd Floor वायरिंग एवं पाइप फिटिंग', area: 4500, unit: 'Sq. Ft.', rate: 22 }
+      ];
+      document.getElementById('billNo').value = 'RE-2026/089';
+      document.getElementById('billDate').value = '05/10/2026';
+      document.getElementById('clientName').value = 'रमेश कुमार';
+      document.getElementById('clientPhone').value = '9876543210';
+      document.getElementById('clientLocation').value = 'साहूगढ़ चौक, वार्ड नं 04';
+      document.getElementById('advancePayment').value = 146250;
+      render();
+    }
+
+    function render() {
+      renderEditorItems();
+
+      // Update Bill Meta
+      const billNo = document.getElementById('billNo').value || 'RE-2026/089';
+      const billDate = document.getElementById('billDate').value || '05/10/2026';
+      const clientName = document.getElementById('clientName').value || '—';
+      const clientPhone = document.getElementById('clientPhone').value || '—';
+      const clientLocation = document.getElementById('clientLocation').value || '—';
+
+      document.getElementById('viewBillNo').innerText = billNo;
+      document.getElementById('viewBillDate').innerText = billDate;
+      document.getElementById('viewClientName').innerText = clientName;
+      document.getElementById('viewClientPhone').innerText = clientPhone;
+      document.getElementById('viewClientLocation').innerText = clientLocation;
+
+      // Table Render
+      const tbody = document.getElementById('viewTableBody');
+      tbody.innerHTML = '';
+      let totalArea = 0;
+      let totalAmount = 0;
+
+      items.forEach((it, idx) => {
+        const amt = it.area * it.rate;
+        totalArea += Number(it.area) || 0;
+        totalAmount += amt;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="text-center">${idx + 1}</td>
+          <td><b>${it.desc}</b></td>
+          <td class="text-right">${formatNumber(it.area)} ${it.unit || 'Sq. Ft.'}</td>
+          <td class="text-right">${formatINR(it.rate)}</td>
+          <td class="text-right font-bold">${formatINR(amt)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('viewTotalArea').innerText = formatNumber(totalArea) + ' Sq. Ft.';
+      document.getElementById('viewTotalAmount').innerText = formatINR(totalAmount);
+
+      const advance = parseFloat(document.getElementById('advancePayment').value) || 0;
+      document.getElementById('viewAdvanceAmount').innerText = '- ' + formatINR(advance);
+
+      const due = totalAmount - advance;
+      document.getElementById('viewBalanceDue').innerText = formatINR(due);
+
+      // Update QR Code
+      const upiAmt = due > 0 ? due : totalAmount;
+      const upiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8826413633@ybl%26pn=Roshan%20Electrician%26am=${upiAmt}%26cu=INR`;
+      document.getElementById('upiQrCode').src = upiUrl;
+
+      // Words (basic representation)
+      document.getElementById('viewHindiWords').innerText = '₹' + formatNumber(totalAmount) + ' रुपये मात्र';
+      document.getElementById('viewEnglishWords').innerText = 'INR ' + formatNumber(totalAmount) + ' Rupees Only';
+    }
+
+    function shareWhatsApp() {
+      const billNo = document.getElementById('billNo').value;
+      const client = document.getElementById('clientName').value;
+      const phone = document.getElementById('clientPhone').value;
+      const due = document.getElementById('viewBalanceDue').innerText;
+      const text = `*ROSHAN ELECTRICIAN (बिल विवरण)*\nबिल नं: ${billNo}\nग्राहक: ${client}\nबकाया राशि: *${due}*\nUPI: 8826413633@ybl\nधन्यवाद!`;
+      const url = `https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
